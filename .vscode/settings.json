@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "board_ac6321a_demo_global_build_cfg.h": "c",
+        "board_ac6321a_demo_cfg.h": "c",
+        "board_ac632n_demo_cfg.h": "c",
+        "app_config.h": "c",
+        "jl_kws_api.h": "c",
+        "task.h": "c",
+        "update_loader_download.h": "c"
+    }
+}

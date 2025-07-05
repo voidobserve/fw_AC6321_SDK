@@ -144,7 +144,7 @@ void mcpwm_set_duty(pwm_ch_num_type pwm_ch, u16 duty)
 
     if (pwm_reg && timer_reg) {
 
-
+        // 如果不是100%占空比，直接写入对应的占空比寄存器
         if (duty != 10000)
         {
             pwm_reg->ch_cmpl = timer_reg->tmr_pr * duty / 10000;
@@ -153,6 +153,8 @@ void mcpwm_set_duty(pwm_ch_num_type pwm_ch, u16 duty)
        
         // timer_reg->tmr_cnt = 0;
         // timer_reg->tmr_con |= 0b01;
+
+        // 如果是100%占空比，给寄存器写入一个比100%占空比还要大的值，否则输出的占空比不会到100%，而是99%
         if (duty == 10000) {
         pwm_reg->ch_cmpl = timer_reg->tmr_pr + 1;
         pwm_reg->ch_cmph = pwm_reg->ch_cmpl;
@@ -278,8 +280,6 @@ void mcpwm_init(struct pwm_platform_data *arg)
     }
 
     log_pwm_info(arg->pwm_ch_num);
-
-    // pwm_reg->ch_con0 |= BIT(1); //即占空比 在 MCTMR_CNT等于 “0”或者等于MCTMR_OVF时 载入
 }
 
 

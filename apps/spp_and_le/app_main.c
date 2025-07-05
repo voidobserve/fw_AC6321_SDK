@@ -233,7 +233,6 @@ void app_main()
 #endif
 
     task_create(user_init, NULL, "user_init");
- 
 }
 
 /*

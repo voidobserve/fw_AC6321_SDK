@@ -35,13 +35,7 @@ void mcpwm_handle(void *p)
 }
 
 void user_init(void *p_param)
-{
-#if 0
-    timer_pwm_init(JL_TIMER2 , IO_PORTA_08, 1000, (u32)10000 * 25 / 100);
-    // set_timer_pwm_duty(JL_TIMER2, (u32)10000 * 25 / 100);
-    // set_timer_pwm_duty(JL_TIMER2, (u32)10000 * 50 / 100);
-    set_timer_pwm_duty(JL_TIMER2, 0);
-#endif
+{ 
     struct pwm_platform_data mcpwm_param;
     mcpwm_param.pwm_aligned_mode = pwm_edge_aligned; // 边沿对齐
     mcpwm_param.pwm_ch_num = pwm_ch0;                // 通道号

@@ -51,11 +51,13 @@ struct pwm_platform_data {
 void mcpwm_set_frequency(pwm_ch_num_type ch, pwm_aligned_mode_type align, u32 frequency);
 void mcpwm_set_duty(pwm_ch_num_type pwm_ch, u16 duty);
 void mctimer_ch_open_or_close(pwm_ch_num_type pwm_ch, u8 enable);
+void mctimer_muilty_chx_open_or_close(u8 muilty_pwm_chx, u8 enable);
 void mcpwm_ch_open_or_close(pwm_ch_num_type pwm_ch, u8 enable);
 void mcpwm_open(pwm_ch_num_type pwm_ch);
 void mcpwm_close(pwm_ch_num_type pwm_ch);
 void mcpwm_init(struct pwm_platform_data *arg);
 void mcpwm_test(void);
+
 
 
 void set_io_ext_interrupt_cbfun(void (*cbfun)(u8 index));

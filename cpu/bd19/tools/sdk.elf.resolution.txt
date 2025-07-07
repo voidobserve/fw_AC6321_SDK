@@ -3048,6 +3048,7 @@ objs/cpu/bd19/mcpwm.c.o
 -r=objs/cpu/bd19/mcpwm.c.o,clk_get,l
 -r=objs/cpu/bd19/mcpwm.c.o,mcpwm_set_duty,pl
 -r=objs/cpu/bd19/mcpwm.c.o,mctimer_ch_open_or_close,pl
+-r=objs/cpu/bd19/mcpwm.c.o,mctimer_muilty_chx_open_or_close,pl
 -r=objs/cpu/bd19/mcpwm.c.o,mcpwm_ch_open_or_close,pl
 -r=objs/cpu/bd19/mcpwm.c.o,mcpwm_open,pl
 -r=objs/cpu/bd19/mcpwm.c.o,mcpwm_close,pl
@@ -3302,7 +3303,7 @@ objs/cpu/bd19/uart_dev.c.o
 -r=objs/cpu/bd19/uart_dev.c.o,jiffies,l
 objs/apps/spp_and_le/user_app/user_main.c.o
 -r=objs/apps/spp_and_le/user_app/user_main.c.o,mcpwm_handle,pl
--r=objs/apps/spp_and_le/user_app/user_main.c.o,mcpwm_set_duty,l
+-r=objs/apps/spp_and_le/user_app/user_main.c.o,mctimer_muilty_chx_open_or_close,l
 -r=objs/apps/spp_and_le/user_app/user_main.c.o,user_init,pl
 -r=objs/apps/spp_and_le/user_app/user_main.c.o,mcpwm_init,l
 -r=objs/apps/spp_and_le/user_app/user_main.c.o,usr_timer_add,l

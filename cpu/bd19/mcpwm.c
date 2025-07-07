@@ -145,24 +145,39 @@ void mcpwm_set_duty(pwm_ch_num_type pwm_ch, u16 duty)
     if (pwm_reg && timer_reg) {
 
         // 如果不是100%占空比，直接写入对应的占空比寄存器
-        if (duty != 10000)
-        {
+        if (duty != 10000) {
             pwm_reg->ch_cmpl = timer_reg->tmr_pr * duty / 10000;
             pwm_reg->ch_cmph = pwm_reg->ch_cmpl;
         }
        
-        // timer_reg->tmr_cnt = 0;
-        // timer_reg->tmr_con |= 0b01;
-
-        // 如果是100%占空比，给寄存器写入一个比100%占空比还要大的值，否则输出的占空比不会到100%，而是99%
-        if (duty == 10000) {
-        pwm_reg->ch_cmpl = timer_reg->tmr_pr + 1;
-        pwm_reg->ch_cmph = pwm_reg->ch_cmpl;
+        /*
+            【原来的、官方的程序】：
+            清零计数器，再开启mcpwm对应的通道，可能会触发一次重载，
+            导致输出的pwm波形有抖动，如果驱动的是功率较大的灯光设备，灯光会有闪烁 
             // timer_reg->tmr_cnt = 0;
-            // timer_reg->tmr_con &= ~(0b11);
+            // timer_reg->tmr_con |= 0b01;
+        */
+
+        /*
+            如果是100%占空比，给寄存器写入一个比100%占空比还要大的值（10000 + 1），
+            否则输出的占空比不会到100%，而是100%以下，附带些细微的脉冲
+        */ 
+            
+        if (duty == 10000) {
+            pwm_reg->ch_cmpl = timer_reg->tmr_pr + 1;
+            pwm_reg->ch_cmph = pwm_reg->ch_cmpl;
+
+            /*
+                原来的程序，如果传参duty是10000，会导致pwm通道直接关闭，
+                在逻辑分析仪上面看到是0%的占空比，低电平
+            */
+            // timer_reg->tmr_cnt = 0;
+            // timer_reg->tmr_con &= ~(0b11); // 关闭对应的通道
         } else if (duty == 0) {
+            // 改为不关闭对应的通道，直接输出0%占空比
+            
             // timer_reg->tmr_cnt = pwm_reg->ch_cmpl;
-            // timer_reg->tmr_con &= ~(0b11);
+            // timer_reg->tmr_con &= ~(0b11); // 关闭对应的通道
         }
     }
 }
@@ -178,9 +193,38 @@ void mctimer_ch_open_or_close(pwm_ch_num_type pwm_ch, u8 enable)
         return;
     }
     if (enable) {
-        JL_MCPWM->MCPWM_CON0 |= BIT(pwm_ch + 8); //TnEN
+        // JL_MCPWM->MCPWM_CON0 |= BIT(pwm_ch + 8); //TnEN
+        
     } else {
-        JL_MCPWM->MCPWM_CON0 &= (~BIT(pwm_ch + 8)); //TnDIS
+        // JL_MCPWM->MCPWM_CON0 &= (~BIT(pwm_ch + 8)); //TnDIS
+    }
+}
+
+/**
+ * @brief 同时打开或者同时关闭一个/多个时基
+ *      
+ * @param muilty_pwm_chx 0b_0001 -- pwm_ch0，0b_0011 -- pwm_ch0和pwm_ch1
+ * @param enable 1：打开  0：关闭
+ */
+void mctimer_muilty_chx_open_or_close(u8 muilty_pwm_chx, u8 enable)
+{  
+    u32 tmp = 0;
+
+    if (muilty_pwm_chx > 0x0F) {
+        return; // 参数无效，退出
+    }
+
+    for (u8 i = 0; i < 4 ; i++) {
+        if (((muilty_pwm_chx >> i) & 0x01) == 0x01) {
+            tmp |= BIT(i + 8);
+        }
+    }
+
+    if (enable) {
+        JL_MCPWM->MCPWM_CON0 |= tmp; //TnEN
+    } else {
+        // JL_MCPWM->MCPWM_CON0 &= (~BIT(muilty_pwm_chx + 8)); //TnDIS
+        JL_MCPWM->MCPWM_CON0 &= (~tmp); //TnDIS
     }
 }
 
